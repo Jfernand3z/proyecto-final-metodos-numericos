@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal - Simulador de Abastecimiento y Conflictos</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .hero-section {
+            padding: 100px 0 60px 0;
+            text-align: center;
+        }
+        .feature-icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .icon-bg-primary { background: rgba(67, 97, 238, 0.1); color: var(--primary-color); }
+        .icon-bg-danger { background: rgba(220, 53, 69, 0.1); color: #dc3545; }
+        .icon-bg-success { background: rgba(25, 135, 84, 0.1); color: #198754; }
+        
+        .objective-list li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            color: #495057;
+        }
+        .objective-list i {
+            color: var(--primary-color);
+            margin-right: 12px;
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+        .menu-link {
+            transition: all 0.2s ease;
+        }
+        .menu-link:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="background-mesh"></div>
+    
+    <!-- Header with Toggle Button -->
+    <header class="p-3 position-fixed top-0 w-100 z-3 bg-dark glass-navbar" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <button class="btn btn-dark border-0 shadow-none text-white p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                <i class="bi bi-list fs-2"></i>
+            </button>
+            <span class="fw-bold gradient-text fs-4"><i class="bi bi-cpu"></i> Simulador Numérico</span>
+            <div style="width: 48px;"></div> <!-- Spacer -->
+        </div>
+    </header>
+
+    <!-- Offcanvas Vertical Menu -->
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel" style="border-right: 1px solid rgba(255,255,255,0.1); width: 320px;">
+        <div class="offcanvas-header border-bottom border-secondary p-4">
+            <h5 class="offcanvas-title fw-bold gradient-text fs-4" id="offcanvasMenuLabel"><i class="bi bi-cpu"></i> Menú Principal</h5>
+            <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-4">
+            <ul class="nav flex-column gap-2 mt-2">
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="index.html">
+                        <i class="bi bi-house-door me-3 text-primary fs-5"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item mt-4 mb-2">
+                    <span class="text-muted text-uppercase small fw-bold ms-3" style="letter-spacing: 1px;">Módulos de Simulación</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="pages/modulo1.html">
+                        <i class="bi bi-bezier2 me-3 text-primary fs-5"></i> 1. Redes Logísticas (SEL)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="pages/modulo2.html">
+                        <i class="bi bi-speedometer2 me-3 text-warning fs-5"></i> 2. Agotamiento (EDO)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="pages/modulo3.html">
+                        <i class="bi bi-graph-up-arrow me-3 text-success fs-5"></i> 3. Escasez (Interp)
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container content-wrapper mb-5 pt-5">
+        
+        <!-- Hero Section -->
+        <section class="hero-section fade-in">
+            <span class="badge bg-primary text-uppercase px-3 py-2 rounded-pill mb-3 shadow-sm">Proyecto de Métodos Numéricos</span>
+            <h1 class="display-3 fw-bold gradient-text mb-4">Simulador de Abastecimiento <br>y Conflictos Sociales</h1>
+            <p class="lead text-muted mx-auto mb-5" style="max-width: 800px;">
+                Una plataforma interactiva que convierte el modelado matemático en el mejor aliado para la toma de decisiones estratégicas frente a crisis logísticas y económicas.
+            </p>
+            <button class="btn btn-primary btn-lg glow-button px-5 py-3 rounded-pill" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
+                Abrir Menú de Módulos <i class="bi bi-list ms-2"></i>
+            </button>
+        </section>
+
+        <!-- Sección: Presentación, Contexto y Objetivos -->
+        <section class="row g-5 mb-5 fade-in delay-1 align-items-stretch">
+            
+            <!-- Columna Izquierda: Problema y Contexto -->
+            <div class="col-lg-6 d-flex flex-column gap-4">
+                
+                <!-- Presentación del Problema -->
+                <div class="glass-card p-4 h-100 position-relative overflow-hidden">
+                    <div class="position-absolute top-0 end-0 p-3 opacity-25">
+                        <i class="bi bi-exclamation-triangle-fill display-1 text-danger"></i>
+                    </div>
+                    <div class="feature-icon-box icon-bg-danger position-relative z-1">
+                        <i class="bi bi-basket-fill"></i>
+                    </div>
+                    <h3 class="fw-bold mb-3 position-relative z-1">Presentación del Problema</h3>
+                    <p class="text-muted mb-0 position-relative z-1">
+                        El país atraviesa una coyuntura crítica caracterizada por <strong>problemas en el abastecimiento de carburantes y alimentos</strong>. Esta situación desencadena incrementos drásticos en los precios, rumores de escasez generalizada y bloqueos de rutas, resultando en serios conflictos sociales y una marcada pérdida del poder adquisitivo familiar.
+                    </p>
+                </div>
+
+                <!-- Contexto General -->
+                <div class="glass-card p-4 h-100 position-relative overflow-hidden">
+                    <div class="position-absolute top-0 end-0 p-3 opacity-25">
+                        <i class="bi bi-globe display-1 text-primary"></i>
+                    </div>
+                    <div class="feature-icon-box icon-bg-primary position-relative z-1">
+                        <i class="bi bi-cpu"></i>
+                    </div>
+                    <h3 class="fw-bold mb-3 position-relative z-1">Contexto General</h3>
+                    <p class="text-muted mb-0 position-relative z-1">
+                        La meta no es construir una simulación utópica, sino utilizar la matemática pura para desmenuzar problemas extremadamente complejos. <strong>Sin caer en posicionamientos políticos</strong>, este motor de cálculo permite comprender la realidad: desde analizar la fluctuación volátil de precios hasta predecir la estabilidad social, transformando los métodos numéricos en herramientas tangibles y objetivas.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Columna Derecha: Objetivo de la Simulación -->
+            <div class="col-lg-6">
+                <div class="glass-card p-4 p-md-5 h-100 border-top border-4 border-success">
+                    <div class="feature-icon-box icon-bg-success mb-4">
+                        <i class="bi bi-bullseye"></i>
+                    </div>
+                    <h3 class="fw-bold mb-4">Objetivo de la Simulación</h3>
+                    <p class="text-muted fw-semibold mb-4">
+                        Diseñar e implementar una herramienta web dinámica capaz de modelar, simular y contrastar escenarios reales de crisis mediante:
+                    </p>
+                    
+                    <ul class="list-unstyled objective-list">
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><strong>Análisis de Redes de Transporte:</strong> Aplicar <em>Sistemas de Ecuaciones Lineales</em> para optimizar el abastecimiento.</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><strong>Proyección de Costos:</strong> Reconstruir curvas de precios a partir de datos dispersos usando <em>Interpolación polinómica</em>.</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><strong>Control de Reservas:</strong> Resolver <em>Ecuaciones Diferenciales Ordinarias (EDO)</em> para predecir el vaciado crítico de carburantes ante el pánico.</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><strong>Puntos de Equilibrio:</strong> Encontrar umbrales críticos de opinión o descontento aplicando <em>Raíces de Ecuaciones</em>.</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span><strong>Impacto Económico:</strong> Cuantificar la pérdida del poder adquisitivo usando <em>Integración Numérica</em>.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+        </section>
+
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

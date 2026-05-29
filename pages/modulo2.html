@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 2: Vaciado de Reservas - EDO</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js Annotation Plugin para la línea horizontal -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+</head>
+<body>
+    <div class="background-mesh"></div>
+
+    <!-- Header with Toggle Button -->
+    <header class="p-3 position-fixed top-0 w-100 z-3 bg-dark glass-navbar" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <button class="btn btn-dark border-0 shadow-none text-white p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                <i class="bi bi-list fs-2"></i>
+            </button>
+            <span class="fw-bold gradient-text fs-4"><i class="bi bi-cpu"></i> Simulador Numérico</span>
+            <div style="width: 48px;"></div> <!-- Spacer -->
+        </div>
+    </header>
+
+    <!-- Offcanvas Vertical Menu -->
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel" style="border-right: 1px solid rgba(255,255,255,0.1); width: 320px;">
+        <div class="offcanvas-header border-bottom border-secondary p-4">
+            <h5 class="offcanvas-title fw-bold gradient-text fs-4" id="offcanvasMenuLabel"><i class="bi bi-cpu"></i> Menú Principal</h5>
+            <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-4">
+            <ul class="nav flex-column gap-2 mt-2">
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="../index.html">
+                        <i class="bi bi-house-door me-3 text-primary fs-5"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item mt-4 mb-2">
+                    <span class="text-muted text-uppercase small fw-bold ms-3" style="letter-spacing: 1px;">Módulos de Simulación</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo1.html">
+                        <i class="bi bi-bezier2 me-3 text-primary fs-5"></i> 1. Redes Logísticas (SEL)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo2.html">
+                        <i class="bi bi-speedometer2 me-3 text-warning fs-5"></i> 2. Agotamiento (EDO)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo3.html">
+                        <i class="bi bi-graph-up-arrow me-3 text-success fs-5"></i> 3. Escasez (Interp)
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="container pb-4 content-wrapper" style="margin-top: 90px;">
+        <header class="text-center mb-4 fade-in">
+            <h1 class="display-5 fw-bold gradient-text">Vaciado Crítico de Reservas</h1>
+            <p class="lead text-muted">Módulo 2: Análisis Dinámico mediante Ecuaciones Diferenciales Ordinarias (EDO)</p>
+        </header>
+
+        <!-- 1. Modelo de vaciado de reservas -->
+        <section class="glass-card p-4 mb-4 fade-in delay-1">
+            <h3 class="fw-semibold"><i class="bi bi-droplet-half"></i> 1. Dinámica del Sistema</h3>
+            <p>
+                Este módulo modela cómo disminuyen las reservas de combustible en una planta frente a un escenario de pánico y reabastecimiento limitado. La ecuación diferencial principal que rige el sistema es:<br>
+                <code class="fs-5 text-primary">R'(t) = Entrada - Consumo - Pérdidas(R)</code>
+            </p>
+            <p class="small text-muted mb-0">
+                Donde <strong>R(t)</strong> es el volumen de reserva en el día <em>t</em>. El consumo incorpora un factor de pánico social, y se asume una tasa de pérdida operativa (evaporación/mantenimiento del 1%) proporcional a la reserva, lo que hace que la EDO dependa tanto de <em>t</em> como de <em>R</em>.
+            </p>
+        </section>
+
+        <div class="row">
+            <!-- 2. Formulario de ingreso de datos -->
+            <div class="col-lg-5 mb-4 fade-in delay-2">
+                <div class="glass-card p-4 h-100">
+                    <h3 class="fw-semibold mb-4">2. Parámetros Iniciales</h3>
+                    
+                    <form id="simForm">
+                        <h6 class="text-primary border-bottom pb-2 mb-3">Condiciones Físicas</h6>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Reserva inicial (R0) [Barriles]</label>
+                            <input type="number" id="r0" class="form-control" value="100000" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Entrada diaria</label>
+                                <input type="number" id="entrada" class="form-control" value="2000" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Consumo base</label>
+                                <input type="number" id="consumo" class="form-control" value="5000" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-danger">Factor de pánico / incremento (%)</label>
+                            <input type="number" id="panico" class="form-control border-danger" value="40" required>
+                            <div class="form-text text-danger">Porcentaje adicional de consumo por acaparamiento.</div>
+                        </div>
+
+                        <h6 class="text-primary border-bottom pb-2 mb-3 mt-4">Configuración Numérica</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Días a simular</label>
+                                <input type="number" id="dias" class="form-control" value="30" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Paso (h) [Días]</label>
+                                <input type="number" step="0.1" id="paso" class="form-control" value="1" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Método de Resolución (EDO)</label>
+                            <select id="metodoEdo" class="form-select">
+                                <option value="euler">Método de Euler (1er orden)</option>
+                                <option value="heun">Método de Heun (2do orden)</option>
+                                <option value="rk4" selected>Runge-Kutta (4to orden - RK4)</option>
+                            </select>
+                        </div>
+
+                        <button type="button" id="btnSimularEdo" class="btn btn-warning btn-lg w-100 glow-button text-dark fw-bold">
+                            <i class="bi bi-activity"></i> Simular Vaciado
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 4. Interpretación y Resultados Analíticos -->
+            <div class="col-lg-7 mb-4 fade-in delay-3">
+                <div class="glass-card p-4 h-100 d-flex flex-column">
+                    <h3 class="fw-semibold mb-3">4. Análisis y Conclusión</h3>
+                    <div id="interpretationBox" class="alert alert-secondary interpretation-box mb-4 flex-grow-1">
+                        Ingrese los parámetros y ejecute la simulación para analizar el agotamiento de las reservas.
+                    </div>
+                    
+                    <div class="p-3 border rounded bg-light">
+                        <h6 class="fw-bold mb-2">Fundamento Numérico</h6>
+                        <p class="small mb-0 text-muted">
+                            <strong>Euler:</strong> Método rápido pero de baja precisión. El error acumulado crece si el paso (h) es grande.<br>
+                            <strong>Heun:</strong> Mejora la estimación promediando las pendientes en los extremos del intervalo.<br>
+                            <strong>RK4:</strong> Evalúa la pendiente en 4 puntos del intervalo, ofreciendo una estabilidad y precisión superior frente a dinámicas no lineales.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Gráfico y Tabla -->
+        <section id="resultsSection" class="glass-card p-4 fade-in delay-4 d-none">
+            <h3 class="fw-semibold mb-4">3. Proyección de Reservas</h3>
+            
+            <div class="row">
+                <!-- Gráfico Chart.js -->
+                <div class="col-12 mb-4">
+                    <div class="chart-container" style="position: relative; height:400px; width:100%">
+                        <canvas id="edoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Valores -->
+            <div class="mt-2">
+                <h5 class="fw-bold mb-3">Tabla Dinámica de Evolución</h5>
+                <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                    <table class="table table-hover table-bordered table-striped text-center">
+                        <thead class="table-dark sticky-top">
+                            <tr>
+                                <th>Día (t)</th>
+                                <th>Reserva Calculada (R)</th>
+                                <th>Derivada (R')</th>
+                                <th>Nivel de Alerta</th>
+                            </tr>
+                        </thead>
+                        <tbody id="edoTableBody">
+                            <!-- JS fill -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Script de lógica Módulo 2 -->
+    <script src="../js/modulo2.js"></script>
+</body>
+</html>

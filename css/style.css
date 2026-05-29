@@ -1,0 +1,156 @@
+/* Variables y Paleta de Colores Moderna (Compartida) */
+:root {
+    --bg-color: #f0f4f8;
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --primary-color: #4361ee;
+    --primary-hover: #3a0ca3;
+    --text-main: #2b2d42;
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Navbar de Cristal */
+.glass-navbar {
+    background: rgba(33, 37, 41, 0.9) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.glass-navbar .navbar-brand {
+    font-size: 1.5rem;
+}
+
+/* Fondo decorativo moderno */
+.background-mesh {
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 50% 50%, rgba(67, 97, 238, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(76, 201, 240, 0.05) 0%, transparent 40%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Contenedor principal */
+.content-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+/* Efecto Glassmorphism para las tarjetas */
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    box-shadow: var(--glass-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+    box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.1);
+}
+
+/* Texto con gradiente */
+.gradient-text {
+    background: linear-gradient(45deg, var(--primary-color), #4cc9f0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Formularios y Cajas */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding: 0.6rem 1rem;
+    transition: all 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+}
+
+/* Botones y Animaciones */
+.glow-button {
+    border: none;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+}
+
+.btn-warning.glow-button {
+    background: linear-gradient(45deg, #ffca28, #ffb300);
+    color: #333 !important;
+}
+
+.btn-warning.glow-button:hover {
+    background: linear-gradient(45deg, #ffb300, #ff8f00);
+    box-shadow: 0 0 20px rgba(255, 179, 0, 0.5);
+    transform: translateY(-2px);
+}
+
+/* Caja de interpretación */
+.interpretation-box {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    border-radius: 10px;
+    background-color: rgba(248, 249, 250, 0.8);
+    border-left: 4px solid #6c757d;
+}
+
+/* Estado Crítico y Alertas en Tablas */
+.table-danger {
+    background-color: #f8d7da !important;
+    color: #842029;
+}
+
+.table-warning {
+    background-color: #fff3cd !important;
+    color: #664d03;
+}
+
+/* Animaciones de entrada */
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 0.8s ease forwards;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Offcanvas Menu Link */
+.menu-link {
+    transition: all 0.2s ease;
+}
+.menu-link:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateX(5px);
+}

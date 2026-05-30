@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 6 – Rumores y Pánico | Métodos Numéricos</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .nivel-card { border-radius: 12px; transition: all 0.3s; cursor: pointer; }
+        .nivel-bajo    { border: 2px solid #2d6a4f; }
+        .nivel-medio   { border: 2px solid #e9c46a; }
+        .nivel-alto    { border: 2px solid #e63946; }
+        .nivel-bajo.selected    { background: rgba(45,106,79,0.12); }
+        .nivel-medio.selected   { background: rgba(233,196,106,0.15); }
+        .nivel-alto.selected    { background: rgba(230,57,70,0.12); }
+        .cond-badge { font-size: 1.5rem; font-weight: 800; }
+        .matrix-display { font-family: 'Courier New', monospace; font-size: 0.8rem; background: #f8f9fa; border-radius: 8px; padding: 12px; overflow-x: auto; }
+        .vuln-bar { height: 18px; border-radius: 6px; transition: width 0.8s ease; }
+    </style>
+</head>
+<body>
+<!--<div class="background-mesh"></div>-->
+ 
+<!-- Header with Toggle Button -->
+    <header class="p-3 position-fixed top-0 w-100 z-3 bg-dark glass-navbar" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <button class="btn btn-dark border-0 shadow-none text-white p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                <i class="bi bi-list fs-2"></i>
+            </button>
+            <span class="fw-bold gradient-text fs-4"><i class="bi bi-cpu"></i> Simulador Numérico</span>
+            <div style="width: 48px;"></div> <!-- Spacer -->
+        </div>
+    </header>
+
+    <!-- Offcanvas Vertical Menu -->
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel" style="border-right: 1px solid rgba(255,255,255,0.1); width: 320px;">
+        <div class="offcanvas-header border-bottom border-secondary p-4">
+            <h5 class="offcanvas-title fw-bold gradient-text fs-4" id="offcanvasMenuLabel"><i class="bi bi-cpu"></i> Menú Principal</h5>
+            <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-4">
+            <ul class="nav flex-column gap-2 mt-2">
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="../index.html">
+                        <i class="bi bi-house-door me-3 text-primary fs-5"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item mt-4 mb-2">
+                    <span class="text-muted text-uppercase small fw-bold ms-3" style="letter-spacing: 1px;">Módulos de Simulación</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo1.html">
+                        <i class="bi bi-bezier2 me-3 text-primary fs-5"></i> 1. Redes Logísticas (SEL)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo2.html">
+                        <i class="bi bi-speedometer2 me-3 text-warning fs-5"></i> 2. Agotamiento (EDO)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo3.html">
+                        <i class="bi bi-graph-up-arrow me-3 text-success fs-5"></i> 3. Escasez (Interp)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo4.html">
+                        <i class="bi bi-cash-stack me-3 text-success fs-5"></i> 
+                              4. Costos Acumulados (Interp)
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo5.html">
+                        <i class="bi bi-exclamation-triangle me-3 text-danger fs-5"></i> 
+                            5. Abastecimiento Critico (Interp)
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo6.html">
+                        <i class="bi bi-megaphone me-3 text-warning fs-5"></i> 
+                             6. Rumores de desabastecimiento (Interp)
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo7.html">
+                        <i class="bi bi-people-fill me-3 text-info fs-5"></i> 
+                                7. Descontento Social (Interp)
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+<!-- NAVBAR -->
+<!--<nav class="navbar navbar-dark glass-navbar sticky-top px-3">
+    <a class="navbar-brand fw-bold" href="../index.html">⚡ MétodosNum</a>
+    <div class="d-flex gap-2">
+        <a href="modulo3.html" class="btn btn-sm btn-outline-light">← Mód 3</a>
+        <a href="modulo5.html" class="btn btn-sm btn-outline-light">Mód 5 →</a>
+    </div>
+</nav>-->
+ 
+<div class="content-wrapper container py-4">
+    
+<br>
+<br>
+<br>
+ 
+    <!-- Header -->
+    <div class="glass-card p-4 mb-4 fade-in">
+        <div class="d-flex align-items-center gap-3 mb-2">
+            <span class="badge bg-warning text-dark fs-6 px-3 py-2">Escenario 6</span>
+            <span class="badge bg-secondary">Sistemas Lineales · Número de Condición</span>
+        </div>
+        <h1 class="gradient-text fw-bold mb-1">Rumores de Desabastecimiento y Pánico en la Red</h1>
+        <p class="text-muted mb-0">Simula cómo los rumores (bajo, medio, alto) provocan compras impulsivas y alteran la distribución de stock. El número de condición revela la sensibilidad del sistema a la desinformación.</p>
+    </div>
+ 
+    <!-- Parámetros -->
+    <div class="glass-card p-4 mb-4 fade-in delay-1">
+        <h5 class="fw-bold mb-3">⚙️ Parámetros del Sistema</h5>
+        <div class="row g-3">
+            <div class="col-md-4"><label class="form-label small fw-semibold">Demanda base por zona (unidades)</label><input type="number" id="demandaBase" class="form-control" value="500" min="10"></div>
+            <div class="col-md-4"><label class="form-label small fw-semibold">Stock total disponible (unidades)</label><input type="number" id="stockTotal" class="form-control" value="2000" min="100"></div>
+        </div>
+        <button class="btn btn-warning glow-button px-4 mt-3" onclick="ejecutar()">▶ Simular los Tres Niveles de Rumor</button>
+    </div>
+ 
+    <!-- Resultados -->
+    <div id="resultados" class="d-none">
+ 
+        <!-- Tarjetas de nivel -->
+        <div class="row g-3 mb-4 fade-in">
+            <div class="col-md-4">
+                <div class="glass-card p-3 nivel-card nivel-bajo selected" id="card-bajo" onclick="seleccionarNivel('bajo')">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-success">Rumor BAJO</span>
+                        <span class="small text-muted">Pert. 1%</span>
+                    </div>
+                    <div class="cond-badge text-success" id="cond-bajo">—</div>
+                    <div class="small text-muted">Número de condición</div>
+                    <div class="mt-2 small fw-semibold" id="estab-bajo">—</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass-card p-3 nivel-card nivel-medio" id="card-medio" onclick="seleccionarNivel('medio')">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-warning text-dark">Rumor MEDIO</span>
+                        <span class="small text-muted">Pert. 5%</span>
+                    </div>
+                    <div class="cond-badge text-warning" id="cond-medio">—</div>
+                    <div class="small text-muted">Número de condición</div>
+                    <div class="mt-2 small fw-semibold" id="estab-medio">—</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass-card p-3 nivel-card nivel-alto" id="card-alto" onclick="seleccionarNivel('alto')">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="badge bg-danger">Rumor ALTO</span>
+                        <span class="small text-muted">Pert. 20%</span>
+                    </div>
+                    <div class="cond-badge text-danger" id="cond-alto">—</div>
+                    <div class="small text-muted">Número de condición</div>
+                    <div class="mt-2 small fw-semibold" id="estab-alto">—</div>
+                </div>
+            </div>
+        </div>
+ 
+        <!-- Detalle del nivel seleccionado -->
+        <div class="glass-card p-4 mb-4 fade-in" id="detalleNivel">
+            <h5 class="fw-bold mb-3" id="tituloDetalle">—</h5>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <h6 class="text-muted small mb-2">SISTEMA DE ECUACIONES A·x = b</h6>
+                    <div class="matrix-display" id="matrizDisplay">—</div>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="text-muted small mb-2">DISTRIBUCIÓN DE STOCK POR ZONA</h6>
+                    <canvas id="chartZonas" height="160"></canvas>
+                </div>
+            </div>
+        </div>
+ 
+        <!-- Sensibilidad -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <h5 class="fw-bold mb-3">🔍 Análisis de Sensibilidad al Rumor</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nivel de Rumor</th>
+                            <th>Factor Demanda</th>
+                            <th>N° Condición</th>
+                            <th>Estabilidad</th>
+                            <th>Cambio en Stock (%)</th>
+                            <th>Barra de Vulnerabilidad</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaSensibilidad"></tbody>
+                </table>
+            </div>
+        </div>
+ 
+        <!-- Gráfico comparativo -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <h5 class="fw-bold mb-3">📊 Número de Condición por Nivel de Rumor</h5>
+            <canvas id="chartCond" height="80"></canvas>
+        </div>
+ 
+        <!-- Interpretación -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <h5 class="fw-bold mb-2">📝 Interpretación del Sistema</h5>
+            <div class="interpretation-box p-3" id="interpretacion"></div>
+        </div>
+    </div>
+</div>
+ 
+<script src="../js/modulo6.js"></script>
+<script>
+let datosGlobales = null;
+let nivelActual = 'bajo';
+let chartZonas = null, chartCond = null;
+ 
+function ejecutar() {
+    const params = {
+        demandaBase: +document.getElementById('demandaBase').value,
+        stock: +document.getElementById('stockTotal').value,
+    };
+    const data = Modulo6.calcular(params);
+    datosGlobales = data;
+    document.getElementById('resultados').classList.remove('d-none');
+ 
+    // Llenar tarjetas
+    data.resultados.forEach(r => {
+        document.getElementById('cond-' + r.nivel).textContent = r.condicion.cond === Infinity ? '∞' : r.condicion.cond.toFixed(2);
+        const estab = r.condicion.cond < 10 ? '✅ Estable' : r.condicion.cond < 100 ? '⚠️ Sensible' : '🔴 Inestable';
+        document.getElementById('estab-' + r.nivel).textContent = estab;
+    });
+ 
+    // Tabla sensibilidad
+    const tbody = document.getElementById('tablaSensibilidad');
+    tbody.innerHTML = '';
+    data.analisis.forEach(a => {
+        const cambio = data.resultados.find(r => r.nivel === a.nivel)?.sensibilidad?.errRelSolucion || 0;
+        const barW = Math.min(cambio * 2, 100);
+        const clsRow = a.nivel === 'alto' ? 'table-danger' : a.nivel === 'medio' ? 'table-warning' : '';
+        const fr = data.resultados.find(r => r.nivel === a.nivel);
+        tbody.innerHTML += `<tr class="${clsRow}">
+            <td><span class="badge ${a.nivel==='alto'?'bg-danger':a.nivel==='medio'?'bg-warning text-dark':'bg-success'}">${a.nivel.toUpperCase()}</span></td>
+            <td>×${fr.factorRumor.toFixed(1)}</td>
+            <td class="fw-bold">${a.cond === Infinity ? '∞' : a.cond}</td>
+            <td>${a.estabilidad}</td>
+            <td>${cambio.toFixed(4)}%</td>
+            <td style="min-width:120px"><div class="vuln-bar" style="width:${barW}%;background:${a.nivel==='alto'?'#e63946':a.nivel==='medio'?'#e9c46a':'#2d6a4f'}"></div></td>
+        </tr>`;
+    });
+ 
+    // Chart condición
+    if (chartCond) chartCond.destroy();
+    chartCond = new Chart(document.getElementById('chartCond').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: ['Rumor Bajo', 'Rumor Medio', 'Rumor Alto'],
+            datasets: [{
+                label: 'Número de Condición',
+                data: data.analisis.map(a => a.cond === Infinity ? 9999 : a.cond),
+                backgroundColor: ['rgba(45,106,79,0.7)', 'rgba(233,196,106,0.8)', 'rgba(230,57,70,0.8)'],
+                borderRadius: 6,
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { title: { display: true, text: 'κ(A)' } } } }
+    });
+ 
+    seleccionarNivel('bajo');
+ 
+    // Interpretación
+    const condAlto = data.resultados.find(r => r.nivel === 'alto')?.condicion.cond || '?';
+    const condBajo = data.resultados.find(r => r.nivel === 'bajo')?.condicion.cond || '?';
+    const cambioAlto = data.resultados.find(r => r.nivel === 'alto')?.sensibilidad?.errRelSolucion?.toFixed(2) || '?';
+    document.getElementById('interpretacion').innerHTML = `
+        <p>El <strong>número de condición κ(A)</strong> mide cuánto se amplifica un pequeño error en la demanda (b) en el stock distribuido (x). Con rumor bajo, κ ≈ <strong>${typeof condBajo === 'number' ? condBajo.toFixed(2) : condBajo}</strong> (sistema estable); con rumor alto, κ ≈ <strong>${typeof condAlto === 'number' ? condAlto.toFixed(2) : condAlto}</strong>.</p>
+        <p>Con una perturbación del 20% en la demanda (rumor alto), el stock calculado cambia hasta un <strong>${cambioAlto}%</strong>, lo que puede provocar sobrestock en unas zonas y desabasto crítico en otras — incluso si la demanda real solo varió marginalmente.</p>
+        <p>Las zonas con mayor dependencia cruzada son las más vulnerables. Un sistema mal condicionado hace que la desinformación sea económicamente equivalente a una crisis real de abastecimiento.</p>
+    `;
+}
+ 
+function seleccionarNivel(nivel) {
+    nivelActual = nivel;
+    ['bajo','medio','alto'].forEach(n => {
+        document.getElementById('card-'+n).classList.toggle('selected', n === nivel);
+    });
+ 
+    const r = datosGlobales?.resultados.find(r => r.nivel === nivel);
+    if (!r) return;
+ 
+    document.getElementById('tituloDetalle').textContent = `Distribución de Stock — Rumor ${nivel.toUpperCase()}`;
+ 
+    // Matriz
+    const A = r.A, b = r.b;
+    let html = '<b>Matriz A (coef. dependencia):</b><br>';
+    A.forEach(row => { html += row.map(v => v.toFixed(2).padStart(7)).join(' ') + '<br>'; });
+    html += '<br><b>Vector b (demanda ajustada):</b><br>';
+    html += b.map(v => v.toFixed(2)).join('  ');
+    document.getElementById('matrizDisplay').innerHTML = html;
+ 
+    // Chart zonas
+    if (chartZonas) chartZonas.destroy();
+    const zonas = r.distribucion?.map(d => d.zona) || [];
+    const stocks = r.distribucion?.map(d => d.stock) || [];
+    const stocksPert = r.distribucionPert?.map(d => d.stock) || [];
+    chartZonas = new Chart(document.getElementById('chartZonas').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: zonas,
+            datasets: [
+                { label: 'Stock Normal', data: stocks, backgroundColor: 'rgba(67,97,238,0.7)', borderRadius: 4 },
+                { label: `Stock c/ Rumor (+${r.perturbacion}%)`, data: stocksPert, backgroundColor: 'rgba(230,57,70,0.6)', borderRadius: 4 },
+            ]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { title: { display: true, text: 'Unidades' } } } }
+    });
+}
+ 
+window.addEventListener('DOMContentLoaded', ejecutar);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

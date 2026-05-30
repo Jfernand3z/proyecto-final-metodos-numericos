@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 7 – Difusión Social | Métodos Numéricos</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .param-label { font-size: 0.82rem; font-weight: 600; color: #555; }
+        .pop-N { color: #4361ee; }
+        .pop-M { color: #e63946; }
+        .pop-D { color: #2d6a4f; }
+        .risk-badge { font-size: 1.6rem; font-weight: 900; letter-spacing: 1px; }
+        .scenario-btn { transition: all 0.2s; }
+        .scenario-btn.active { box-shadow: 0 0 0 3px rgba(67,97,238,0.4); }
+        .comparison-col { border-left: 3px solid; border-radius: 8px; padding: 12px; }
+        .col-rk4   { border-color: #4361ee; background: rgba(67,97,238,0.04); }
+        .col-heun  { border-color: #f72585; background: rgba(247,37,133,0.04); }
+        .col-sinmed{ border-color: #e63946; background: rgba(230,57,70,0.04); }
+        .col-mejdial{ border-color: #2d6a4f; background: rgba(45,106,79,0.04); }
+    </style>
+</head>
+<body>
+<!--<div class="background-mesh"></div>-->
+ 
+<!-- Header with Toggle Button -->
+    <header class="p-3 position-fixed top-0 w-100 z-3 bg-dark glass-navbar" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <button class="btn btn-dark border-0 shadow-none text-white p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                <i class="bi bi-list fs-2"></i>
+            </button>
+            <span class="fw-bold gradient-text fs-4"><i class="bi bi-cpu"></i> Simulador Numérico</span>
+            <div style="width: 48px;"></div> <!-- Spacer -->
+        </div>
+    </header>
+
+    <!-- Offcanvas Vertical Menu -->
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel" style="border-right: 1px solid rgba(255,255,255,0.1); width: 320px;">
+        <div class="offcanvas-header border-bottom border-secondary p-4">
+            <h5 class="offcanvas-title fw-bold gradient-text fs-4" id="offcanvasMenuLabel"><i class="bi bi-cpu"></i> Menú Principal</h5>
+            <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-4">
+            <ul class="nav flex-column gap-2 mt-2">
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="../index.html">
+                        <i class="bi bi-house-door me-3 text-primary fs-5"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item mt-4 mb-2">
+                    <span class="text-muted text-uppercase small fw-bold ms-3" style="letter-spacing: 1px;">Módulos de Simulación</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo1.html">
+                        <i class="bi bi-bezier2 me-3 text-primary fs-5"></i> 1. Redes Logísticas (SEL)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo2.html">
+                        <i class="bi bi-speedometer2 me-3 text-warning fs-5"></i> 2. Agotamiento (EDO)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo3.html">
+                        <i class="bi bi-graph-up-arrow me-3 text-success fs-5"></i> 3. Escasez (Interp)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo4.html">
+                        <i class="bi bi-cash-stack me-3 text-success fs-5"></i> 
+                              4. Costos Acumulados (Interp)
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo5.html">
+                        <i class="bi bi-exclamation-triangle me-3 text-danger fs-5"></i> 
+                            5. Abastecimiento Critico (Interp)
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo6.html">
+                        <i class="bi bi-megaphone me-3 text-warning fs-5"></i> 
+                             6. Rumores de desabastecimiento (Interp)
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo7.html">
+                        <i class="bi bi-people-fill me-3 text-info fs-5"></i> 
+                                7. Descontento Social (Interp)
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+<!-- NAVBAR -->
+<!--<nav class="navbar navbar-dark glass-navbar sticky-top px-3">
+    <a class="navbar-brand fw-bold" href="../index.html">⚡ MétodosNum</a>
+    <div class="d-flex gap-2">
+        <a href="modulo3.html" class="btn btn-sm btn-outline-light">← Mód 3</a>
+        <a href="modulo5.html" class="btn btn-sm btn-outline-light">Mód 5 →</a>
+    </div>
+</nav>-->
+ 
+<div class="content-wrapper container py-4">
+    
+<br>
+<br>
+<br>
+ 
+    <!-- Header -->
+    <div class="glass-card p-4 mb-4 fade-in">
+        <div class="d-flex align-items-center gap-3 mb-2">
+            <span class="badge bg-success fs-6 px-3 py-2">Escenario 7</span>
+            <span class="badge bg-secondary">EDO · Heun · RK4</span>
+        </div>
+        <h1 class="gradient-text fw-bold mb-1">Modelo de Difusión de Opinión y Descontento Social</h1>
+        <p class="text-muted mb-0">Sistema de EDOs que modela el "contagio" del descontento social entre Neutrales N(t), Manifestantes M(t) y Mediadores D(t).</p>
+        <div class="row g-2 mt-3">
+            <div class="col-auto"><span class="badge" style="background:rgba(67,97,238,0.15);color:#4361ee;font-size:0.85rem;">N(t) Neutrales</span></div>
+            <div class="col-auto"><span class="badge" style="background:rgba(230,57,70,0.15);color:#e63946;font-size:0.85rem;">M(t) Manifestantes</span></div>
+            <div class="col-auto"><span class="badge" style="background:rgba(45,106,79,0.15);color:#2d6a4f;font-size:0.85rem;">D(t) Mediadores</span></div>
+        </div>
+    </div>
+ 
+    <!-- Parámetros -->
+    <div class="glass-card p-4 mb-4 fade-in delay-1">
+        <h5 class="fw-bold mb-3">⚙️ Parámetros del Modelo</h5>
+        <div class="row g-3 mb-3">
+            <div class="col-md-4 col-6">
+                <label class="param-label pop-N">N₀ – Ciudadanos Neutrales iniciales</label>
+                <input type="number" id="N0" class="form-control" value="900">
+            </div>
+            <div class="col-md-4 col-6">
+                <label class="param-label pop-M">M₀ – Manifestantes iniciales</label>
+                <input type="number" id="M0" class="form-control" value="80">
+            </div>
+            <div class="col-md-4 col-6">
+                <label class="param-label pop-D">D₀ – Mediadores iniciales</label>
+                <input type="number" id="D0" class="form-control" value="20">
+            </div>
+        </div>
+        <div class="row g-3 mb-3">
+            <div class="col-md-2 col-6">
+                <label class="param-label">α – Influencia descontento (N→M)</label>
+                <input type="number" id="alpha" class="form-control" value="0.003" step="0.001" min="0" max="1">
+            </div>
+            <div class="col-md-2 col-6">
+                <label class="param-label">β – Retorno neutralidad (M→N)</label>
+                <input type="number" id="beta" class="form-control" value="0.05" step="0.01" min="0" max="1">
+            </div>
+            <div class="col-md-2 col-6">
+                <label class="param-label">γ – Efectividad diálogo (M→N)</label>
+                <input type="number" id="gamma" class="form-control" value="0.02" step="0.005" min="0" max="1">
+            </div>
+            <div class="col-md-2 col-6">
+                <label class="param-label">δ – Surgimiento mediadores</label>
+                <input type="number" id="delta" class="form-control" value="0.01" step="0.001" min="0" max="1">
+            </div>
+            <div class="col-md-2 col-6">
+                <label class="param-label">ε – Desgaste mediadores</label>
+                <input type="number" id="epsilon" class="form-control" value="0.03" step="0.005" min="0" max="1">
+            </div>
+            <div class="col-md-1 col-6">
+                <label class="param-label">Días (T)</label>
+                <input type="number" id="tFin" class="form-control" value="60" min="10" max="365">
+            </div>
+            <div class="col-md-1 col-6">
+                <label class="param-label">Paso h</label>
+                <input type="number" id="h" class="form-control" value="0.1" step="0.05" min="0.01" max="1">
+            </div>
+        </div>
+        <button class="btn btn-warning glow-button px-4" onclick="ejecutar()">▶ Simular Dinámica Social</button>
+    </div>
+ 
+    <!-- Resultados -->
+    <div id="resultados" class="d-none">
+ 
+        <!-- Riesgo social -->
+        <div class="row g-3 mb-4 fade-in">
+            <div class="col-md-3">
+                <div class="glass-card p-3 text-center">
+                    <div class="small text-muted">Riesgo Social (RK4)</div>
+                    <div class="risk-badge" id="riesgoBadge" style="color:#e63946">—</div>
+                    <div class="small text-muted" id="tendenciaBadge">—</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card p-3 text-center">
+                    <div class="small text-muted pop-M">Pico de Manifestantes</div>
+                    <div class="result-value" style="font-size:1.4rem;font-weight:800;color:#e63946" id="picoM">—</div>
+                    <div class="small text-muted" id="tPicoM">—</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card p-3 text-center">
+                    <div class="small text-muted">% Manifestantes al final</div>
+                    <div class="result-value" style="font-size:1.4rem;font-weight:800;" id="pctM">—</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card p-3 text-center">
+                    <div class="small text-muted">% Neutrales al final</div>
+                    <div class="result-value" style="font-size:1.4rem;font-weight:800;" id="pctN">—</div>
+                </div>
+            </div>
+        </div>
+ 
+        <!-- Gráfico principal RK4 -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">📈 Dinámica Poblacional — RK4 (principal)</h5>
+                <span class="badge bg-primary">Runge-Kutta 4°</span>
+            </div>
+            <canvas id="chartRK4" height="90"></canvas>
+        </div>
+ 
+        <!-- Comparación RK4 vs Heun -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0">⚖️ Comparación: RK4 vs Heun (Manifestantes)</h5>
+            </div>
+            <canvas id="chartComparacion" height="80"></canvas>
+        </div>
+ 
+        <!-- Escenarios hipotéticos -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <h5 class="fw-bold mb-3">🔮 Análisis de Escenarios</h5>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="comparison-col col-rk4">
+                        <div class="small fw-bold text-primary mb-1">Escenario Base (RK4)</div>
+                        <div id="analRK4" class="small"></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="comparison-col col-heun">
+                        <div class="small fw-bold mb-1" style="color:#f72585">Heun (comparación)</div>
+                        <div id="analHeun" class="small"></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="comparison-col col-sinmed">
+                        <div class="small fw-bold text-danger mb-1">Sin Mediadores (γ=δ=0)</div>
+                        <div id="analSinMed" class="small"></div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="comparison-col col-mejdial">
+                        <div class="small fw-bold mb-1" style="color:#2d6a4f">Diálogo ×3 (γ triplicada)</div>
+                        <div id="analMejDial" class="small"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+ 
+        <!-- Escenario sin mediadores vs mejor diálogo -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <h5 class="fw-bold mb-3">📊 Manifestantes: Escenario Base vs Sin Mediadores vs Mejor Diálogo</h5>
+            <canvas id="chartEscenarios" height="80"></canvas>
+        </div>
+ 
+        <!-- Tabla comparativa RK4 vs Heun -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <h5 class="fw-bold mb-3">📋 Tabla Comparativa RK4 vs Heun</h5>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>t (día)</th>
+                            <th class="pop-N">N RK4</th><th class="pop-M">M RK4</th><th class="pop-D">D RK4</th>
+                            <th class="pop-N">N Heun</th><th class="pop-M">M Heun</th><th class="pop-D">D Heun</th>
+                            <th>|ΔM|</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaComparativa"></tbody>
+                </table>
+            </div>
+        </div>
+ 
+        <!-- Interpretación -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <h5 class="fw-bold mb-2">📝 Interpretación del Modelo</h5>
+            <div class="interpretation-box p-3" id="interpretacion"></div>
+        </div>
+    </div>
+</div>
+ 
+<script src="../js/modulo7.js"></script>
+<script>
+let chartRK4 = null, chartComp = null, chartEsc = null;
+ 
+function ejecutar() {
+    const params = {
+        N0: +document.getElementById('N0').value,
+        M0: +document.getElementById('M0').value,
+        D0: +document.getElementById('D0').value,
+        alpha:   +document.getElementById('alpha').value,
+        beta:    +document.getElementById('beta').value,
+        gamma:   +document.getElementById('gamma').value,
+        delta:   +document.getElementById('delta').value,
+        epsilon: +document.getElementById('epsilon').value,
+        tFin:    +document.getElementById('tFin').value,
+        h:       +document.getElementById('h').value,
+    };
+ 
+    const data = Modulo7.calcular(params);
+    document.getElementById('resultados').classList.remove('d-none');
+ 
+    // KPIs
+    const a = data.analisisRK4;
+    document.getElementById('riesgoBadge').textContent = a.riesgo;
+    document.getElementById('riesgoBadge').style.color = a.riesgo === 'ALTO' ? '#e63946' : a.riesgo === 'MEDIO' ? '#e9c46a' : '#2d6a4f';
+    document.getElementById('tendenciaBadge').textContent = a.tendencia;
+    document.getElementById('picoM').textContent = a.picoManifestantes.toFixed(0);
+    document.getElementById('tPicoM').textContent = `Día ${a.tiempoPico}`;
+    document.getElementById('pctM').textContent = a.pctManifestantes.toFixed(1) + '%';
+    document.getElementById('pctN').textContent = a.pctNeutrales.toFixed(1) + '%';
+ 
+    // Subsamplear para gráficos (max 200 puntos)
+    const sub = arr => { const s = Math.max(1, Math.floor(arr.length / 200)); return arr.filter((_, i) => i % s === 0); };
+    const rk4s = sub(data.puntosRK4), heuns = sub(data.puntosHeun), sinmeds = sub(data.sinMediadores), mejds = sub(data.mejorDialogo);
+    const labels = rk4s.map(p => p.t.toFixed(1));
+ 
+    // Chart RK4
+    if (chartRK4) chartRK4.destroy();
+    chartRK4 = new Chart(document.getElementById('chartRK4').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [
+                { label: 'N(t) Neutrales', data: rk4s.map(p => p.N), borderColor: '#4361ee', backgroundColor: 'rgba(67,97,238,0.06)', fill: true, borderWidth: 2, tension: 0.4, pointRadius: 0 },
+                { label: 'M(t) Manifestantes', data: rk4s.map(p => p.M), borderColor: '#e63946', backgroundColor: 'rgba(230,57,70,0.06)', fill: true, borderWidth: 2, tension: 0.4, pointRadius: 0 },
+                { label: 'D(t) Mediadores', data: rk4s.map(p => p.D), borderColor: '#2d6a4f', backgroundColor: 'rgba(45,106,79,0.06)', fill: true, borderWidth: 2, tension: 0.4, pointRadius: 0 },
+            ]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { title: { display: true, text: 'Población' } }, x: { title: { display: true, text: 'Tiempo (días)' } } } }
+    });
+ 
+    // Chart comparación Heun vs RK4
+    if (chartComp) chartComp.destroy();
+    chartComp = new Chart(document.getElementById('chartComparacion').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [
+                { label: 'M(t) RK4', data: rk4s.map(p => p.M), borderColor: '#4361ee', borderWidth: 2.5, tension: 0.4, pointRadius: 0 },
+                { label: 'M(t) Heun', data: heuns.map(p => p?.M ?? null), borderColor: '#f72585', borderWidth: 1.5, borderDash: [5,3], tension: 0.4, pointRadius: 0 },
+            ]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { title: { display: true, text: 'Manifestantes' } } } }
+    });
+ 
+    // Chart escenarios
+    const labelsSM = sub(data.sinMediadores).map(p => p.t.toFixed(1));
+    const labelsMD = sub(data.mejorDialogo).map(p => p.t.toFixed(1));
+    if (chartEsc) chartEsc.destroy();
+    chartEsc = new Chart(document.getElementById('chartEscenarios').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [
+                { label: 'Base (RK4)', data: rk4s.map(p => p.M), borderColor: '#4361ee', borderWidth: 2, tension: 0.4, pointRadius: 0 },
+                { label: 'Sin Mediadores', data: sinmeds.map(p => p.M), borderColor: '#e63946', borderWidth: 2, borderDash: [4,3], tension: 0.4, pointRadius: 0 },
+                { label: 'Diálogo ×3', data: mejds.map(p => p.M), borderColor: '#2d6a4f', borderWidth: 2, borderDash: [8,3], tension: 0.4, pointRadius: 0 },
+            ]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { title: { display: true, text: 'Manifestantes' } } } }
+    });
+ 
+    // Tarjetas de análisis
+    const renderAnal = (a, id) => {
+        document.getElementById(id).innerHTML = `
+            <div>Riesgo: <strong>${a.riesgo}</strong></div>
+            <div>Tendencia: <strong>${a.tendencia}</strong></div>
+            <div>Pico M: <strong>${a.picoManifestantes.toFixed(0)}</strong> (día ${a.tiempoPico})</div>
+            <div>M final: <strong>${a.pctManifestantes.toFixed(1)}%</strong></div>
+        `;
+    };
+    renderAnal(data.analisisRK4,    'analRK4');
+    renderAnal(data.analisisHeun,   'analHeun');
+    renderAnal(data.analisisSinMed, 'analSinMed');
+    renderAnal(data.analisisMejDial,'analMejDial');
+ 
+    // Tabla comparativa
+    const tbody = document.getElementById('tablaComparativa');
+    tbody.innerHTML = '';
+    data.tablaComparativa.forEach(r => {
+        const cls = r.errM > 1 ? 'table-warning' : '';
+        tbody.innerHTML += `<tr class="${cls}">
+            <td>${r.t}</td>
+            <td>${r.N_rk4?.toFixed(2) ?? '—'}</td>
+            <td class="fw-semibold">${r.M_rk4?.toFixed(2) ?? '—'}</td>
+            <td>${r.D_rk4?.toFixed(2) ?? '—'}</td>
+            <td>${r.N_heun?.toFixed(2) ?? '—'}</td>
+            <td>${r.M_heun?.toFixed(2) ?? '—'}</td>
+            <td>${r.D_heun?.toFixed(2) ?? '—'}</td>
+            <td>${r.errM}</td>
+        </tr>`;
+    });
+ 
+    // Interpretación
+    const aSM = data.analisisSinMed, aMD = data.analisisMejDial, aRK = data.analisisRK4;
+    document.getElementById('interpretacion').innerHTML = `
+        <p>Con los parámetros actuales, el conflicto social <strong>${aRK.tendencia === 'Escalando' ? 'tiende a escalar' : aRK.tendencia === 'Estabilizado' ? 'se estabiliza' : 'está disminuyendo'}</strong>. El pico de manifestantes fue <strong>${aRK.picoManifestantes.toFixed(0)} personas</strong> en el día ${aRK.tiempoPico}, con un riesgo <strong>${aRK.riesgo}</strong>.</p>
+        <p><strong>Sin mediadores</strong>: el conflicto ${aSM.riesgo === 'ALTO' ? 'se dispara, alcanzando ' + aSM.picoManifestantes.toFixed(0) + ' manifestantes como pico' : 'se mantiene en riesgo ' + aSM.riesgo}. <strong>Con diálogo triplicado</strong>: el pico cae a ${aMD.picoManifestantes.toFixed(0)}, lo que demuestra que la mediación activa es la intervención más efectiva.</p>
+        <p><strong>RK4 vs Heun</strong>: RK4 es de cuarto orden (error O(h⁴)) mientras Heun es de segundo orden (O(h²)), por lo que RK4 es más preciso con el mismo paso h. Las diferencias son pequeñas para h pequeño, pero se acumulan en simulaciones largas.</p>
+    `;
+}
+ 
+window.addEventListener('DOMContentLoaded', ejecutar);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

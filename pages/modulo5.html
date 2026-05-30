@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 5 – Umbrales Críticos | Métodos Numéricos</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .method-card { border-left: 4px solid; border-radius: 10px; }
+        .method-bisec  { border-color: #4361ee; }
+        .method-newton { border-color: #f72585; }
+        .method-secante{ border-color: #4cc9f0; }
+        .root-badge { font-size: 1.4rem; font-weight: 800; }
+        .iter-table td, .iter-table th { font-size: 0.8rem; }
+        .conv-fast  { color: #2d6a4f; font-weight: 700; }
+        .conv-slow  { color: #d62828; font-weight: 700; }
+    </style>
+</head>
+<body>
+<!--<div class="background-mesh"></div>-->
+ 
+<!-- Header with Toggle Button -->
+    <header class="p-3 position-fixed top-0 w-100 z-3 bg-dark glass-navbar" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <button class="btn btn-dark border-0 shadow-none text-white p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                <i class="bi bi-list fs-2"></i>
+            </button>
+            <span class="fw-bold gradient-text fs-4"><i class="bi bi-cpu"></i> Simulador Numérico</span>
+            <div style="width: 48px;"></div> <!-- Spacer -->
+        </div>
+    </header>
+
+    <!-- Offcanvas Vertical Menu -->
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel" style="border-right: 1px solid rgba(255,255,255,0.1); width: 320px;">
+        <div class="offcanvas-header border-bottom border-secondary p-4">
+            <h5 class="offcanvas-title fw-bold gradient-text fs-4" id="offcanvasMenuLabel"><i class="bi bi-cpu"></i> Menú Principal</h5>
+            <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-4">
+            <ul class="nav flex-column gap-2 mt-2">
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="../index.html">
+                        <i class="bi bi-house-door me-3 text-primary fs-5"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item mt-4 mb-2">
+                    <span class="text-muted text-uppercase small fw-bold ms-3" style="letter-spacing: 1px;">Módulos de Simulación</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo1.html">
+                        <i class="bi bi-bezier2 me-3 text-primary fs-5"></i> 1. Redes Logísticas (SEL)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo2.html">
+                        <i class="bi bi-speedometer2 me-3 text-warning fs-5"></i> 2. Agotamiento (EDO)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo3.html">
+                        <i class="bi bi-graph-up-arrow me-3 text-success fs-5"></i> 3. Escasez (Interp)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo4.html">
+                        <i class="bi bi-cash-stack me-3 text-success fs-5"></i> 
+                              4. Costos Acumulados (Interp)
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo5.html">
+                        <i class="bi bi-exclamation-triangle me-3 text-danger fs-5"></i> 
+                            5. Abastecimiento Critico (Interp)
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo6.html">
+                        <i class="bi bi-megaphone me-3 text-warning fs-5"></i> 
+                             6. Rumores de desabastecimiento (Interp)
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo7.html">
+                        <i class="bi bi-people-fill me-3 text-info fs-5"></i> 
+                                7. Descontento Social (Interp)
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+<!-- NAVBAR -->
+<!--<nav class="navbar navbar-dark glass-navbar sticky-top px-3">
+    <a class="navbar-brand fw-bold" href="../index.html">⚡ MétodosNum</a>
+    <div class="d-flex gap-2">
+        <a href="modulo3.html" class="btn btn-sm btn-outline-light">← Mód 3</a>
+        <a href="modulo5.html" class="btn btn-sm btn-outline-light">Mód 5 →</a>
+    </div>
+</nav>-->
+ 
+<div class="content-wrapper container py-4">
+    
+<br>
+<br>
+<br>
+ 
+    <!-- Header -->
+    <div class="glass-card p-4 mb-4 fade-in">
+        <div class="d-flex align-items-center gap-3 mb-2">
+            <span class="badge bg-danger fs-6 px-3 py-2">Escenario 5</span>
+            <span class="badge bg-secondary">Raíces de Ecuaciones</span>
+        </div>
+        <h1 class="gradient-text fw-bold mb-1">Umbrales Críticos de Abastecimiento</h1>
+        <p class="text-muted mb-0">Identifica puntos exactos donde el sistema cambia de estado o se vuelve insostenible usando Bisección, Newton-Raphson y Secante.</p>
+    </div>
+ 
+    <!-- Selector de escenario -->
+    <div class="glass-card p-4 mb-4 fade-in delay-1">
+        <h5 class="fw-bold mb-3">🎯 Selecciona el Escenario</h5>
+        <div class="row g-2 mb-3">
+            <div class="col-md-4">
+                <button class="btn btn-outline-primary w-100 escenario-btn active-esc" id="btn-costo" onclick="seleccionarEscenario('costo_ingreso')">
+                    💸 Día que gasto supera ingreso
+                </button>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-outline-success w-100 escenario-btn" id="btn-repo" onclick="seleccionarEscenario('tasa_reposicion')">
+                    ⛽ Tasa de reposición de equilibrio
+                </button>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-outline-danger w-100 escenario-btn" id="btn-protesta" onclick="seleccionarEscenario('protesta')">
+                    📢 Umbral de protesta masiva
+                </button>
+            </div>
+        </div>
+ 
+        <!-- Parámetros dinámicos -->
+        <div id="params-costo_ingreso">
+            <div class="row g-3">
+                <div class="col-md-4"><label class="form-label small fw-semibold">Costo diario inicial (Bs.)</label><input type="number" id="c0" class="form-control" value="80" step="1"></div>
+                <div class="col-md-4"><label class="form-label small fw-semibold">Tasa de crecimiento diaria (α)</label><input type="number" id="alpha_c" class="form-control" value="0.02" step="0.001"></div>
+                <div class="col-md-4"><label class="form-label small fw-semibold">Ingreso mensual (Bs.)</label><input type="number" id="ingreso_c" class="form-control" value="3000"></div>
+            </div>
+        </div>
+        <div id="params-tasa_reposicion" class="d-none">
+            <div class="row g-3">
+                <div class="col-md-4"><label class="form-label small fw-semibold">Consumo diario (unidades)</label><input type="number" id="consumo" class="form-control" value="50"></div>
+                <div class="col-md-4"><label class="form-label small fw-semibold">Stock inicial (unidades)</label><input type="number" id="stock0" class="form-control" value="200"></div>
+                <div class="col-md-4"><label class="form-label small fw-semibold">Horizonte (días)</label><input type="number" id="diasRepo" class="form-control" value="30"></div>
+            </div>
+        </div>
+        <div id="params-protesta" class="d-none">
+            <div class="row g-3">
+                <div class="col-md-3"><label class="form-label small fw-semibold">Pendiente logística (k)</label><input type="number" id="k_p" class="form-control" value="0.1" step="0.01"></div>
+                <div class="col-md-3"><label class="form-label small fw-semibold">Centro de inflexión (x₀)</label><input type="number" id="x0_p" class="form-control" value="50"></div>
+                <div class="col-md-3"><label class="form-label small fw-semibold">Capacidad máxima (L %)</label><input type="number" id="L_p" class="form-control" value="100"></div>
+                <div class="col-md-3"><label class="form-label small fw-semibold">Umbral de protesta (%)</label><input type="number" id="umbral_p" class="form-control" value="60"></div>
+            </div>
+        </div>
+ 
+        <div class="mt-3">
+            <label class="form-label small fw-semibold">Tolerancia</label>
+            <input type="number" id="tolerancia" class="form-control w-auto d-inline-block" value="0.000001" step="0.000001" style="width:160px!important">
+            <button class="btn btn-warning glow-button px-4 ms-2" onclick="ejecutar()">▶ Encontrar Umbral</button>
+        </div>
+    </div>
+ 
+    <!-- Resultados -->
+    <div id="resultados" class="d-none">
+ 
+        <!-- Gráfico función -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <h5 class="fw-bold mb-1" id="chartTitulo">—</h5>
+            <p class="text-muted small mb-3" id="chartSubtitulo"></p>
+            <canvas id="chartFuncion" height="90"></canvas>
+        </div>
+ 
+        <!-- Raíces encontradas -->
+        <div class="row g-3 mb-4 fade-in">
+            <div class="col-md-4">
+                <div class="glass-card p-3 method-card method-bisec">
+                    <div class="small text-muted mb-1">Bisección</div>
+                    <div class="root-badge text-primary" id="raizBisec">—</div>
+                    <div class="small text-muted" id="unidadBisec"></div>
+                    <div class="small mt-1" id="itersBisec"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass-card p-3 method-card method-newton">
+                    <div class="small text-muted mb-1">Newton-Raphson</div>
+                    <div class="root-badge" style="color:#f72585" id="raizNewton">—</div>
+                    <div class="small text-muted" id="unidadNewton"></div>
+                    <div class="small mt-1" id="itersNewton"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="glass-card p-3 method-card method-secante">
+                    <div class="small text-muted mb-1">Secante</div>
+                    <div class="root-badge" style="color:#4cc9f0" id="raizSecante">—</div>
+                    <div class="small text-muted" id="unidadSecante"></div>
+                    <div class="small mt-1" id="itersSecante"></div>
+                </div>
+            </div>
+        </div>
+ 
+        <!-- Tabs de iteraciones -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <h5 class="fw-bold mb-3">📋 Tabla de Iteraciones</h5>
+            <ul class="nav nav-tabs mb-3" id="iterTabs">
+                <li class="nav-item"><button class="nav-link active" onclick="mostrarTab('bisec')">Bisección</button></li>
+                <li class="nav-item"><button class="nav-link" onclick="mostrarTab('newton')">Newton-Raphson</button></li>
+                <li class="nav-item"><button class="nav-link" onclick="mostrarTab('secante')">Secante</button></li>
+            </ul>
+            <div id="tab-bisec" class="table-responsive">
+                <table class="table table-sm iter-table" id="tbl-bisec">
+                    <thead class="table-dark"><tr><th>Iter</th><th>a</th><th>b</th><th>c</th><th>f(c)</th><th>Error</th></tr></thead>
+                    <tbody id="body-bisec"></tbody>
+                </table>
+            </div>
+            <div id="tab-newton" class="table-responsive d-none">
+                <table class="table table-sm iter-table">
+                    <thead class="table-dark"><tr><th>Iter</th><th>x</th><th>f(x)</th><th>f'(x)</th><th>x₁</th><th>Error</th></tr></thead>
+                    <tbody id="body-newton"></tbody>
+                </table>
+            </div>
+            <div id="tab-secante" class="table-responsive d-none">
+                <table class="table table-sm iter-table">
+                    <thead class="table-dark"><tr><th>Iter</th><th>x₀</th><th>x₁</th><th>x₂</th><th>f(x₂)</th><th>Error</th></tr></thead>
+                    <tbody id="body-secante"></tbody>
+                </table>
+            </div>
+        </div>
+ 
+        <!-- Interpretación -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <h5 class="fw-bold mb-2">📝 Interpretación</h5>
+            <div class="interpretation-box p-3" id="interpretacion"></div>
+        </div>
+    </div>
+</div>
+ 
+<script src="../js/modulo5.js"></script>
+<script>
+let escenarioActual = 'costo_ingreso';
+let chartFn = null;
+ 
+function seleccionarEscenario(tipo) {
+    escenarioActual = tipo;
+    document.querySelectorAll('.escenario-btn').forEach(b => b.classList.remove('active-esc','btn-primary','btn-success','btn-danger'));
+    const map = { costo_ingreso: ['btn-costo','btn-outline-primary'], tasa_reposicion: ['btn-repo','btn-outline-success'], protesta: ['btn-protesta','btn-outline-danger'] };
+    ['params-costo_ingreso','params-tasa_reposicion','params-protesta'].forEach(id => document.getElementById(id).classList.add('d-none'));
+    document.getElementById('params-' + tipo).classList.remove('d-none');
+    document.getElementById(map[tipo][0]).classList.add(map[tipo][1].replace('outline-',''));
+}
+ 
+function getParams() {
+    if (escenarioActual === 'costo_ingreso')   return { c0: +document.getElementById('c0').value, alpha: +document.getElementById('alpha_c').value, ingreso: +document.getElementById('ingreso_c').value };
+    if (escenarioActual === 'tasa_reposicion') return { consumo: +document.getElementById('consumo').value, stock0: +document.getElementById('stock0').value, dias: +document.getElementById('diasRepo').value };
+    if (escenarioActual === 'protesta')        return { k: +document.getElementById('k_p').value, x0: +document.getElementById('x0_p').value, L: +document.getElementById('L_p').value, umbralProtesta: +document.getElementById('umbral_p').value };
+}
+ 
+function ejecutar() {
+    const resultado = Modulo5.calcular(escenarioActual, getParams());
+    document.getElementById('resultados').classList.remove('d-none');
+ 
+    // Chart
+    document.getElementById('chartTitulo').textContent = resultado.titulo;
+    document.getElementById('chartSubtitulo').textContent = `${resultado.xLabel} vs ${resultado.yLabel}`;
+ 
+    const xData = resultado.puntos.map(p => p.t);
+    const yData = resultado.puntos.map(p => p.y);
+    const raizVal = resultado.biseccion?.raiz || resultado.newtonRaphson?.raiz;
+ 
+    if (chartFn) chartFn.destroy();
+    chartFn = new Chart(document.getElementById('chartFuncion').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: xData.map(v => v.toFixed(2)),
+            datasets: [
+                { label: 'f(x)', data: yData, borderColor: '#4361ee', backgroundColor: 'rgba(67,97,238,0.07)', fill: true, borderWidth: 2, tension: 0.3, pointRadius: 0 },
+                { label: 'Raíz (f=0)', data: xData.map(() => 0), borderColor: '#e63946', borderWidth: 1.5, borderDash: [6,3], pointRadius: 0 },
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } },
+            scales: {
+                x: { title: { display: true, text: resultado.xLabel } },
+                y: { title: { display: true, text: resultado.yLabel } }
+            }
+        }
+    });
+ 
+    const unidad = resultado.unidad;
+    const mostrarRaiz = (r, idRaiz, idUnidad, idIters) => {
+        if (!r || r.error) { document.getElementById(idRaiz).textContent = r?.error || 'Error'; return; }
+        document.getElementById(idRaiz).textContent = r.raiz.toFixed(6);
+        document.getElementById(idUnidad).textContent = unidad;
+        document.getElementById(idIters).textContent = `${r.iteraciones.length} iteraciones`;
+    };
+    mostrarRaiz(resultado.biseccion,     'raizBisec',  'unidadBisec',  'itersBisec');
+    mostrarRaiz(resultado.newtonRaphson, 'raizNewton', 'unidadNewton', 'itersNewton');
+    mostrarRaiz(resultado.secante,       'raizSecante','unidadSecante','itersSecante');
+ 
+    // Tablas iteraciones
+    llenarTablaBisec(resultado.biseccion?.iteraciones || []);
+    llenarTablaNewton(resultado.newtonRaphson?.iteraciones || []);
+    llenarTablaSecante(resultado.secante?.iteraciones || []);
+ 
+    // Interpretación
+    const r = resultado.biseccion || resultado.newtonRaphson;
+    const itersB = resultado.biseccion?.iteraciones?.length || '?';
+    const itersN = resultado.newtonRaphson?.iteraciones?.length || '?';
+    const itersS = resultado.secante?.iteraciones?.length || '?';
+    document.getElementById('interpretacion').innerHTML = `
+        <p>El umbral crítico encontrado es <strong>${r?.raiz?.toFixed(6)} ${unidad}</strong>. Los tres métodos convergen al mismo valor, confirmando la solución.</p>
+        <p><strong>Convergencia:</strong> Bisección requirió <strong>${itersB} iteraciones</strong> (convergencia lineal), Newton-Raphson <strong>${itersN}</strong> (cuadrática) y Secante <strong>${itersS}</strong> (superlineal). Newton-Raphson es el más eficiente cuando la derivada está disponible.</p>
+        <p>Superar este umbral implica un cambio de estado crítico en el sistema: ${resultado.titulo.toLowerCase()}. Se recomienda monitorear el indicador y actuar preventivamente antes de alcanzarlo.</p>
+    `;
+}
+ 
+function llenarTablaBisec(iters) {
+    document.getElementById('body-bisec').innerHTML = iters.slice(0, 50).map(r =>
+        `<tr><td>${r.iter}</td><td>${r.a}</td><td>${r.b}</td><td class="fw-semibold">${r.c}</td><td>${r.fc}</td><td class="${r.error < 1e-4 ? 'conv-fast' : 'conv-slow'}">${r.error}</td></tr>`
+    ).join('');
+}
+ 
+function llenarTablaNewton(iters) {
+    document.getElementById('body-newton').innerHTML = iters.slice(0, 50).map(r =>
+        `<tr><td>${r.iter}</td><td>${r.x}</td><td>${r.fx}</td><td>${r.dfx}</td><td class="fw-semibold">${r.x1}</td><td class="${r.error < 1e-4 ? 'conv-fast' : 'conv-slow'}">${r.error}</td></tr>`
+    ).join('');
+}
+ 
+function llenarTablaSecante(iters) {
+    document.getElementById('body-secante').innerHTML = iters.slice(0, 50).map(r =>
+        `<tr><td>${r.iter}</td><td>${r.x0}</td><td>${r.x1}</td><td class="fw-semibold">${r.x2}</td><td>${r.fx2}</td><td class="${r.error < 1e-4 ? 'conv-fast' : 'conv-slow'}">${r.error}</td></tr>`
+    ).join('');
+}
+ 
+function mostrarTab(tab) {
+    ['bisec','newton','secante'].forEach(t => {
+        document.getElementById('tab-'+t).classList.toggle('d-none', t !== tab);
+    });
+    document.querySelectorAll('#iterTabs button').forEach((b, i) => {
+        b.classList.toggle('active', ['bisec','newton','secante'][i] === tab);
+    });
+}
+ 
+window.addEventListener('DOMContentLoaded', () => { seleccionarEscenario('costo_ingreso'); ejecutar(); });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

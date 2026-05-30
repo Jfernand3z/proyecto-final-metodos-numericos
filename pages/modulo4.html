@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 4 – Costo Acumulado | Métodos Numéricos</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .badge-method { font-size: 0.75rem; padding: 4px 10px; border-radius: 20px; }
+        .result-value { font-size: 1.6rem; font-weight: 700; }
+        .product-row:hover { background: rgba(67,97,238,0.04); }
+        .loss-bar { height: 10px; border-radius: 6px; background: linear-gradient(90deg, #4361ee, #e63946); }
+    </style>
+</head>
+<body>
+<!--<div class="background-mesh"></div>-->
+ 
+<!-- Header with Toggle Button -->
+    <header class="p-3 position-fixed top-0 w-100 z-3 bg-dark glass-navbar" style="border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <button class="btn btn-dark border-0 shadow-none text-white p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                <i class="bi bi-list fs-2"></i>
+            </button>
+            <span class="fw-bold gradient-text fs-4"><i class="bi bi-cpu"></i> Simulador Numérico</span>
+            <div style="width: 48px;"></div> <!-- Spacer -->
+        </div>
+    </header>
+
+    <!-- Offcanvas Vertical Menu -->
+    <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel" style="border-right: 1px solid rgba(255,255,255,0.1); width: 320px;">
+        <div class="offcanvas-header border-bottom border-secondary p-4">
+            <h5 class="offcanvas-title fw-bold gradient-text fs-4" id="offcanvasMenuLabel"><i class="bi bi-cpu"></i> Menú Principal</h5>
+            <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-4">
+            <ul class="nav flex-column gap-2 mt-2">
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="../index.html">
+                        <i class="bi bi-house-door me-3 text-primary fs-5"></i> Inicio
+                    </a>
+                </li>
+                <li class="nav-item mt-4 mb-2">
+                    <span class="text-muted text-uppercase small fw-bold ms-3" style="letter-spacing: 1px;">Módulos de Simulación</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo1.html">
+                        <i class="bi bi-bezier2 me-3 text-primary fs-5"></i> 1. Redes Logísticas (SEL)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo2.html">
+                        <i class="bi bi-speedometer2 me-3 text-warning fs-5"></i> 2. Agotamiento (EDO)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo3.html">
+                        <i class="bi bi-graph-up-arrow me-3 text-success fs-5"></i> 3. Escasez (Interp)
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo4.html">
+                        <i class="bi bi-cash-stack me-3 text-success fs-5"></i> 
+                              4. Costos Acumulados (Interp)
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo5.html">
+                        <i class="bi bi-exclamation-triangle me-3 text-danger fs-5"></i> 
+                            5. Abastecimiento Critico (Interp)
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo6.html">
+                        <i class="bi bi-megaphone me-3 text-warning fs-5"></i> 
+                             6. Rumores de desabastecimiento (Interp)
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link text-white rounded menu-link px-3 py-2" href="modulo7.html">
+                        <i class="bi bi-people-fill me-3 text-info fs-5"></i> 
+                                7. Descontento Social (Interp)
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+<!-- NAVBAR -->
+<!--<nav class="navbar navbar-dark glass-navbar sticky-top px-3">
+    <a class="navbar-brand fw-bold" href="../index.html">⚡ MétodosNum</a>
+    <div class="d-flex gap-2">
+        <a href="modulo3.html" class="btn btn-sm btn-outline-light">← Mód 3</a>
+        <a href="modulo5.html" class="btn btn-sm btn-outline-light">Mód 5 →</a>
+    </div>
+</nav>-->
+ 
+<div class="content-wrapper container py-4">
+    
+<br>
+<br>
+<br> 
+    <!-- Header -->
+    <div class="glass-card p-4 mb-4 fade-in">
+        <div class="d-flex align-items-center gap-3 mb-2">
+            <span class="badge bg-primary fs-6 px-3 py-2">Escenario 4</span>
+            <span class="badge bg-secondary">Integración Numérica</span>
+        </div>
+        <h1 class="gradient-text fw-bold mb-1">Costo Acumulado y Pérdida del Poder Adquisitivo</h1>
+        <p class="text-muted mb-0">Calcula el gasto total familiar cuando los precios de la canasta básica suben progresivamente durante un mes. El área bajo la curva de precios diarios representa el gasto real.</p>
+    </div>
+ 
+    <!-- Parámetros -->
+    <div class="glass-card p-4 mb-4 fade-in delay-1">
+        <h5 class="fw-bold mb-3">⚙️ Parámetros del Modelo</h5>
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Ingreso Familiar Mensual (Bs.)</label>
+                <input type="number" id="ingresoFamiliar" class="form-control" value="3000" min="500" max="50000">
+            </div>
+            <div class="col-12"><hr class="my-1"><p class="text-muted small mb-2">Precios base y tasas de crecimiento mensual por producto:</p></div>
+ 
+            <div class="col-md-2"><label class="form-label small">Arroz – Precio Base (Bs.)</label><input type="number" id="precioArroz" class="form-control form-control-sm" value="12" step="0.5"></div>
+            <div class="col-md-2"><label class="form-label small">Arroz – Tasa Crecimiento</label><input type="number" id="tasaArroz" class="form-control form-control-sm" value="0.35" step="0.05" max="2"></div>
+            <div class="col-md-2"><label class="form-label small">Aceite – Precio Base (Bs.)</label><input type="number" id="precioAceite" class="form-control form-control-sm" value="25" step="0.5"></div>
+            <div class="col-md-2"><label class="form-label small">Aceite – Tasa Crecimiento</label><input type="number" id="tasaAceite" class="form-control form-control-sm" value="0.50" step="0.05" max="2"></div>
+            <div class="col-md-2"><label class="form-label small">Azúcar – Precio Base (Bs.)</label><input type="number" id="precioAzucar" class="form-control form-control-sm" value="8" step="0.5"></div>
+            <div class="col-md-2"><label class="form-label small">Azúcar – Tasa Crecimiento</label><input type="number" id="tasaAzucar" class="form-control form-control-sm" value="0.25" step="0.05" max="2"></div>
+            <div class="col-md-2"><label class="form-label small">Pan – Precio Base (Bs.)</label><input type="number" id="precioPan" class="form-control form-control-sm" value="3" step="0.5"></div>
+            <div class="col-md-2"><label class="form-label small">Pan – Tasa Crecimiento</label><input type="number" id="tasaPan" class="form-control form-control-sm" value="0.20" step="0.05" max="2"></div>
+            <div class="col-md-2"><label class="form-label small">Leche – Precio Base (Bs.)</label><input type="number" id="precioLeche" class="form-control form-control-sm" value="10" step="0.5"></div>
+            <div class="col-md-2"><label class="form-label small">Leche – Tasa Crecimiento</label><input type="number" id="tasaLeche" class="form-control form-control-sm" value="0.30" step="0.05" max="2"></div>
+        </div>
+        <button class="btn btn-warning glow-button px-4 mt-3" onclick="ejecutar()">▶ Calcular Gasto Acumulado</button>
+    </div>
+ 
+    <!-- Resultados ocultos inicialmente -->
+    <div id="resultados" class="d-none">
+ 
+        <!-- KPIs -->
+        <div class="row g-3 mb-4 fade-in">
+            <div class="col-md-3">
+                <div class="glass-card p-3 text-center">
+                    <div class="text-muted small">Gasto Real (Trapecio)</div>
+                    <div class="result-value gradient-text" id="kpiReal">—</div>
+                    <div class="text-muted small">Bs. / mes</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card p-3 text-center">
+                    <div class="text-muted small">Gasto Estable (sin inflación)</div>
+                    <div class="result-value text-success" id="kpiEstable">—</div>
+                    <div class="text-muted small">Bs. / mes</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card p-3 text-center">
+                    <div class="text-muted small">Pérdida de Poder Adquisitivo</div>
+                    <div class="result-value text-danger" id="kpiPerdida">—</div>
+                    <div class="text-muted small">Bs. adicionales</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="glass-card p-3 text-center">
+                    <div class="text-muted small">% Ingreso Comprometido</div>
+                    <div class="result-value text-warning" id="kpiIngreso">—</div>
+                    <div class="text-muted small">en canasta básica</div>
+                </div>
+            </div>
+        </div>
+ 
+        <!-- Gráfico precios diarios -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <h5 class="fw-bold mb-3">📈 Evolución de Precios Diarios (30 días)</h5>
+            <canvas id="chartPrecios" height="90"></canvas>
+        </div>
+ 
+        <!-- Comparación de métodos por producto -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <h5 class="fw-bold mb-3">🔢 Comparación de Métodos de Integración por Producto</h5>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="tablaMetodos">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Producto</th>
+                            <th>P. Inicial</th>
+                            <th>P. Final</th>
+                            <th><span class="badge bg-primary badge-method">Trapecio</span></th>
+                            <th><span class="badge bg-success badge-method">Simpson 1/3</span></th>
+                            <th><span class="badge bg-warning text-dark badge-method">Simpson 3/8</span></th>
+                            <th>Gasto Estable</th>
+                            <th>Pérdida (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaBody"></tbody>
+                </table>
+            </div>
+        </div>
+ 
+        <!-- Gráfico de pérdida por producto -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <h5 class="fw-bold mb-3">📊 Pérdida de Poder Adquisitivo por Producto</h5>
+            <canvas id="chartPerdida" height="80"></canvas>
+        </div>
+ 
+        <!-- Interpretación -->
+        <div class="glass-card p-4 mb-4 fade-in">
+            <h5 class="fw-bold mb-2">📝 Interpretación del Análisis</h5>
+            <div class="interpretation-box p-3" id="interpretacion"></div>
+        </div>
+ 
+    </div>
+</div>
+ 
+<script src="../js/modulo4.js"></script>
+<script>
+let chartPrecios = null, chartPerdida = null;
+ 
+function ejecutar() {
+    const params = {
+        ingresoFamiliar: +document.getElementById('ingresoFamiliar').value,
+        precioArroz:  +document.getElementById('precioArroz').value,
+        tasaArroz:    +document.getElementById('tasaArroz').value,
+        precioAceite: +document.getElementById('precioAceite').value,
+        tasaAceite:   +document.getElementById('tasaAceite').value,
+        precioAzucar: +document.getElementById('precioAzucar').value,
+        tasaAzucar:   +document.getElementById('tasaAzucar').value,
+        precioPan:    +document.getElementById('precioPan').value,
+        tasaPan:      +document.getElementById('tasaPan').value,
+        precioLeche:  +document.getElementById('precioLeche').value,
+        tasaLeche:    +document.getElementById('tasaLeche').value,
+    };
+ 
+    const { resultados, resumen } = Modulo4.calcular(params);
+    document.getElementById('resultados').classList.remove('d-none');
+ 
+    // KPIs
+    document.getElementById('kpiReal').textContent    = resumen.totalGastoReal.toFixed(2);
+    document.getElementById('kpiEstable').textContent = resumen.totalGastoEstable.toFixed(2);
+    document.getElementById('kpiPerdida').textContent = resumen.totalPerdida.toFixed(2);
+    document.getElementById('kpiIngreso').textContent = resumen.pctIngresoAfectado.toFixed(1) + '%';
+ 
+    // Tabla
+    const colors = ['#4361ee','#4cc9f0','#f72585','#7209b7','#3a0ca3'];
+    const tbody = document.getElementById('tablaBody');
+    tbody.innerHTML = '';
+    resultados.forEach((r, i) => {
+        const pct = r.pctPerdida;
+        const cls = pct > 30 ? 'table-danger' : pct > 15 ? 'table-warning' : '';
+        tbody.innerHTML += `<tr class="${cls} product-row">
+            <td><span class="fw-semibold">${r.nombre}</span></td>
+            <td>${r.precioInicial.toFixed(2)}</td>
+            <td>${r.precioFinal.toFixed(2)}</td>
+            <td class="fw-semibold">${r.trap.toFixed(2)}</td>
+            <td>${r.s13 !== null ? r.s13.toFixed(2) : '<span class="text-muted">N/A</span>'}</td>
+            <td>${r.s38 !== null ? r.s38.toFixed(2) : '<span class="text-muted">N/A</span>'}</td>
+            <td>${r.gastoEstable.toFixed(2)}</td>
+            <td><span class="badge ${pct>30?'bg-danger':pct>15?'bg-warning text-dark':'bg-success'}">${pct.toFixed(1)}%</span></td>
+        </tr>`;
+    });
+ 
+    // Chart precios
+    const labels = Array.from({length:31}, (_,i)=>`Día ${i}`);
+    const datasets = resultados.map((r, i) => ({
+        label: r.nombre,
+        data: r.precios,
+        borderColor: colors[i % colors.length],
+        backgroundColor: 'transparent',
+        borderWidth: 2,
+        tension: 0.4,
+        pointRadius: 0,
+    }));
+    if (chartPrecios) chartPrecios.destroy();
+    chartPrecios = new Chart(document.getElementById('chartPrecios').getContext('2d'), {
+        type: 'line',
+        data: { labels, datasets },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { title: { display: true, text: 'Precio (Bs.)' } } } }
+    });
+ 
+    // Chart pérdida
+    if (chartPerdida) chartPerdida.destroy();
+    chartPerdida = new Chart(document.getElementById('chartPerdida').getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels: resultados.map(r => r.nombre),
+            datasets: [
+                { label: 'Gasto Real', data: resultados.map(r => r.trap), backgroundColor: 'rgba(67,97,238,0.7)' },
+                { label: 'Gasto Estable', data: resultados.map(r => r.gastoEstable), backgroundColor: 'rgba(76,201,240,0.5)' },
+                { label: 'Pérdida (Bs.)', data: resultados.map(r => r.perdida), backgroundColor: 'rgba(231,29,54,0.7)' },
+            ]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'bottom' } }, scales: { y: { title: { display: true, text: 'Bs.' } } } }
+    });
+ 
+    // Interpretación
+    const mayorImpacto = resultados.reduce((a, b) => a.perdida > b.perdida ? a : b);
+    const alerta = resumen.pctIngresoAfectado > 80 ? '⚠️ <strong>ALERTA CRÍTICA:</strong> La familia destina más del 80% de su ingreso a la canasta básica, poniendo en riesgo su subsistencia.' :
+                   resumen.pctIngresoAfectado > 60 ? '🟡 La familia destina más del 60% de su ingreso a la canasta básica.' : '✅ El gasto en canasta básica representa menos del 60% del ingreso.';
+ 
+    document.getElementById('interpretacion').innerHTML = `
+        <p>${alerta}</p>
+        <p>Durante el período de 30 días con precios crecientes, el gasto real total de la familia fue <strong>Bs. ${resumen.totalGastoReal}</strong>, frente a un escenario estable de <strong>Bs. ${resumen.totalGastoEstable}</strong>. Esto implica una <strong>pérdida de poder adquisitivo de Bs. ${resumen.totalPerdida}</strong> (${resumen.pctTotalPerdida}% adicional).</p>
+        <p>El producto que más afectó el presupuesto fue <strong>${mayorImpacto.nombre}</strong> con una pérdida de <strong>Bs. ${mayorImpacto.perdida.toFixed(2)}</strong> (${mayorImpacto.pctPerdida}% sobre precio estable).</p>
+        <p><strong>Comparación de métodos:</strong> Simpson 1/3 y 3/8 ofrecen mayor precisión por ser de orden superior, mientras que el Trapecio provee una estimación conservadora. Las diferencias entre métodos reflejan la curvatura de los precios.</p>
+    `;
+}
+ 
+// Ejecutar automáticamente al cargar
+window.addEventListener('DOMContentLoaded', ejecutar);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

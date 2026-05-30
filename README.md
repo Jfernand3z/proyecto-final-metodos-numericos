@@ -1,4 +1,4 @@
-# Proyecto: Plataforma Interactiva de Simulación Matemática
+# Proyecto: Simulador de Abastecimiento y Conflictos Sociales
 
 Una aplicación web interactiva desarrollada para simular, analizar y visualizar distintos escenarios reales mediante modelos matemáticos y computacionales. Este proyecto aplica métodos numéricos para comprender y buscar soluciones a problemas complejos de la realidad social y económica actual.
 

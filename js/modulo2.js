@@ -224,7 +224,7 @@ function renderEDOChart(t_arr, r_arr, nivelCritico, metodoName) {
         data: {
             labels: t_arr.map(t => t.toFixed(1)),
             datasets: [{
-                label: `Reserva R(t) - Método: ${labelMethod}`,
+                label: `Reserva de Gasolina R(t) - Método: ${labelMethod}`,
                 data: r_arr,
                 borderColor: '#4361ee',
                 backgroundColor: 'rgba(67, 97, 238, 0.1)',
@@ -304,26 +304,26 @@ function generateEDOInterpretation(t_arr, r_arr, nivelCritico, metodo, h, params
 
     // 1. ¿En cuántos días la reserva llega a un nivel crítico?
     let respuesta1 = diaCritico !== -1 
-        ? `La reserva llega a su nivel crítico (${nivelCritico.toFixed(0)} unidades) en el <strong>día ${diaCritico.toFixed(2)}</strong>. ` + (diaVaciado !== -1 ? `El vaciado total se da en el día ${diaVaciado.toFixed(2)}.` : '')
-        : `Durante el periodo simulado, la reserva se mantuvo por encima del nivel crítico. El sistema logró estabilizarse.`;
-    texto += `<li class="list-group-item bg-transparent"><strong>1. ¿En cuántos días la reserva llega a un nivel crítico?</strong><br>${respuesta1}</li>`;
+        ? `La reserva de gasolina llega a su nivel crítico de operaciones (${nivelCritico.toFixed(0)} barriles) en el <strong>día ${diaCritico.toFixed(2)}</strong>. ` + (diaVaciado !== -1 ? `El vaciado total de los tanques de YPFB se da en el día ${diaVaciado.toFixed(2)}.` : '')
+        : `Durante el periodo simulado, la reserva de gasolina se mantuvo por encima del nivel crítico. El abastecimiento de YPFB logró estabilizarse.`;
+    texto += `<li class="list-group-item bg-transparent"><strong>1. ¿En cuántos días la reserva de YPFB llega a un nivel crítico?</strong><br>${respuesta1}</li>`;
 
     // 2. ¿Qué pasa si aumenta el consumo diario?
     let consumoActual = (params.consumoBase * (1 + params.panico)).toFixed(0);
-    texto += `<li class="list-group-item bg-transparent"><strong>2. ¿Qué pasa si aumenta el consumo diario?</strong><br>
-    Actualmente el consumo total (con pánico) es de ${consumoActual} unid/día. Si aumenta, la pendiente de la curva se vuelve más pronunciada hacia abajo (negativa), acelerando exponencialmente el tiempo en llegar al colapso y vaciado total.</li>`;
+    texto += `<li class="list-group-item bg-transparent"><strong>2. ¿Qué pasa si aumentan las filas y el consumo diario en la ciudad?</strong><br>
+    Actualmente el consumo total (sumando pánico en surtidores) es de ${consumoActual} barriles/día. Si aumenta, la pendiente de la curva se vuelve más pronunciada hacia abajo (negativa), acelerando exponencialmente el tiempo para que YPFB llegue al colapso y vaciado total de gasolina.</li>`;
 
     // 3. ¿Qué pasa si se reduce el abastecimiento?
-    texto += `<li class="list-group-item bg-transparent"><strong>3. ¿Qué pasa si se reduce el abastecimiento?</strong><br>
-    Si la entrada diaria (actualmente ${params.entrada} unid/día) disminuye por debajo del consumo, la derivada <em>R'(t)</em> se hace fuertemente negativa. La planta dependerá enteramente de su reserva inicial <em>R0</em>, la cual se drenará sin capacidad de reposición.</li>`;
+    texto += `<li class="list-group-item bg-transparent"><strong>3. ¿Qué pasa si se reduce la llegada de cisternas (abastecimiento)?</strong><br>
+    Si la entrada diaria (actualmente ${params.entrada} barriles/día) disminuye por bloqueos o falta de importación, la derivada <em>R'(t)</em> se hace fuertemente negativa. La ciudad dependerá enteramente de la reserva inicial <em>R0</em> de la planta, drenándola sin capacidad de reposición.</li>`;
 
     // 4. ¿Qué método da una aproximación más estable?
     texto += `<li class="list-group-item bg-transparent"><strong>4. ¿Qué método da una aproximación más estable?</strong><br>
-    El método de <strong>Runge-Kutta de 4to Orden (RK4)</strong> es el más estable y matemáticamente fiel al comportamiento real, ya que amortigua los errores de truncamiento paso a paso, a diferencia de métodos de orden inferior.</li>`;
+    El método de <strong>Runge-Kutta de 4to Orden (RK4)</strong> es el más estable y matemáticamente fiel al comportamiento real del almacenamiento, ya que amortigua los errores de truncamiento paso a paso, a diferencia de métodos de orden inferior.</li>`;
 
     // 5. ¿Cuál es la diferencia entre Euler, Heun y RK4?
     texto += `<li class="list-group-item bg-transparent"><strong>5. ¿Cuál es la diferencia entre Euler, Heun y RK4?</strong><br>
-    <strong>Euler</strong> proyecta con una sola pendiente inicial (muy impreciso si el paso <em>h</em> es grande). <strong>Heun</strong> mejora promediando la pendiente inicial y final (2do orden). <strong>RK4</strong> promedia cuatro pendientes dentro del intervalo, logrando una altísima precisión para modelar dinámicas de agotamiento.</li>`;
+    <strong>Euler</strong> proyecta la reserva de gasolina con una sola pendiente inicial (muy impreciso si el paso <em>h</em> es grande). <strong>Heun</strong> mejora promediando la pendiente inicial y final. <strong>RK4</strong> promedia cuatro pendientes dentro del intervalo, logrando una altísima precisión para modelar dinámicas de agotamiento en las plantas.</li>`;
 
     texto += `</ul>`;
 

@@ -217,12 +217,13 @@ function runInterpolation() {
         curveData.push({ x: x, y: evalFunction(x) });
     }
     
-    renderInterpolationChart(dataPoints, curveData, {x: xTarget, y: yEstimado}, metodo);
-    generateInterpretation(metodo, x_vals, y_vals, xTarget, yEstimado, curveData);
+    let nombreProducto = document.getElementById('nombreProducto').value || 'Producto';
+    renderInterpolationChart(dataPoints, curveData, {x: xTarget, y: yEstimado}, metodo, nombreProducto);
+    generateInterpretation(metodo, x_vals, y_vals, xTarget, yEstimado, curveData, nombreProducto);
 }
 
 // --- GRÁFICO (CHART.JS) ---
-function renderInterpolationChart(originalPts, curvePts, targetPt, metodo) {
+function renderInterpolationChart(originalPts, curvePts, targetPt, metodo, nombreProducto) {
     const ctx = document.getElementById('interpChart').getContext('2d');
     
     if (interpChartInstance) {
@@ -282,7 +283,7 @@ function renderInterpolationChart(originalPts, curvePts, targetPt, metodo) {
                     title: { display: true, text: 'Día del Mes' }
                 },
                 y: {
-                    title: { display: true, text: 'Precio (Bs)' }
+                    title: { display: true, text: `Precio de ${nombreProducto} (Bs)` }
                 }
             },
             plugins: {
@@ -299,7 +300,7 @@ function renderInterpolationChart(originalPts, curvePts, targetPt, metodo) {
 }
 
 // --- INTERPRETACIÓN DINÁMICA ---
-function generateInterpretation(metodo, x_vals, y_vals, targetX, targetY, curveData) {
+function generateInterpretation(metodo, x_vals, y_vals, targetX, targetY, curveData, nombreProducto) {
     const interBox = document.getElementById('interpretationBox');
     
     let isExtrapolating = targetX < x_vals[0] || targetX > x_vals[x_vals.length - 1];
@@ -333,8 +334,8 @@ function generateInterpretation(metodo, x_vals, y_vals, targetX, targetY, curveD
     texto += `<li class="list-group-item bg-transparent"><strong>2. ¿Cómo se comporta la curva de precios durante el mes?</strong><br>${respuesta2}</li>`;
 
     // 3. ¿Qué producto tuvo mayor incremento?
-    texto += `<li class="list-group-item bg-transparent"><strong>3. ¿Qué producto tuvo mayor incremento?</strong><br>
-    En esta tabla se analiza únicamente la papa. A lo largo de la simulación base (día ${x_vals[0]} al ${x_vals[x_vals.length-1]}), sufrió un encarecimiento bruto de ${incremento.toFixed(2)} Bs, lo que representa un aumento del <strong>${porcentaje}%</strong> respecto a su precio inicial.</li>`;
+    texto += `<li class="list-group-item bg-transparent"><strong>3. ¿Cómo fue el incremento de este producto?</strong><br>
+    Analizando los datos de <strong>${nombreProducto}</strong> a lo largo de la simulación base (día ${x_vals[0]} al ${x_vals[x_vals.length-1]}), este producto sufrió un encarecimiento bruto de ${incremento.toFixed(2)} Bs, lo que representa un aumento del <strong>${porcentaje}%</strong> respecto a su precio inicial.</li>`;
 
     // 4. ¿Qué tan confiable es la interpolación?
     let respuesta4 = isExtrapolating 

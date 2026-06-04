@@ -97,19 +97,19 @@
     
     <div class="container pb-4 content-wrapper" style="margin-top: 90px;">
         <header class="text-center mb-4 fade-in">
-            <h1 class="display-5 fw-bold gradient-text">Vaciado Crítico de Reservas</h1>
+            <h1 class="display-5 fw-bold gradient-text">Vaciado Crítico de Reservas: Planta YPFB</h1>
             <p class="lead text-muted">Módulo 2: Análisis Dinámico mediante Ecuaciones Diferenciales Ordinarias (EDO)</p>
         </header>
 
         <!-- 1. Modelo de vaciado de reservas -->
         <section class="glass-card p-4 mb-4 fade-in delay-1">
-            <h3 class="fw-semibold"><i class="bi bi-droplet-half"></i> 1. Dinámica del Sistema</h3>
+            <h3 class="fw-semibold"><i class="bi bi-droplet-half"></i> 1. Dinámica del Sistema de Abastecimiento</h3>
             <p>
-                Este módulo modela cómo disminuyen las reservas de combustible en una planta frente a un escenario de pánico y reabastecimiento limitado. La ecuación diferencial principal que rige el sistema es:<br>
+                Este módulo modela cómo disminuyen las reservas de gasolina especial en una planta de almacenaje de <strong>YPFB</strong> frente a un escenario de alta demanda por pánico ciudadano y un reabastecimiento limitado mediante cisternas. La ecuación diferencial principal que rige el sistema es:<br>
                 <code class="fs-5 text-primary">R'(t) = Entrada - Consumo - Pérdidas(R)</code>
             </p>
             <p class="small text-muted mb-0">
-                Donde <strong>R(t)</strong> es el volumen de reserva en el día <em>t</em>. El consumo incorpora un factor de pánico social, y se asume una tasa de pérdida operativa (evaporación/mantenimiento del 1%) proporcional a la reserva, lo que hace que la EDO dependa tanto de <em>t</em> como de <em>R</em>.
+                Donde <strong>R(t)</strong> es el volumen de reserva de gasolina en el día <em>t</em>. El consumo incorpora un factor de pánico social (filas en surtidores), y se asume una tasa de pérdida operativa o merma del 1% proporcional a la reserva en tanques, lo que hace que la EDO dependa tanto de <em>t</em> como de <em>R</em>.
             </p>
         </section>
 
@@ -117,29 +117,29 @@
             <!-- 2. Formulario de ingreso de datos -->
             <div class="col-lg-5 mb-4 fade-in delay-2">
                 <div class="glass-card p-4 h-100">
-                    <h3 class="fw-semibold mb-4">2. Parámetros Iniciales</h3>
+                    <h3 class="fw-semibold mb-4">2. Parámetros Iniciales de Planta</h3>
                     
                     <form id="simForm">
-                        <h6 class="text-primary border-bottom pb-2 mb-3">Condiciones Físicas</h6>
+                        <h6 class="text-primary border-bottom pb-2 mb-3">Condiciones Operativas (YPFB)</h6>
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Reserva inicial (R0) [Barriles]</label>
+                            <label class="form-label fw-bold">Reserva inicial de Gasolina (R0) [Barriles]</label>
                             <input type="number" id="r0" class="form-control" value="100000" required>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold">Entrada diaria</label>
+                                <label class="form-label fw-bold">Entrada diaria [Barriles/día]</label>
                                 <input type="number" id="entrada" class="form-control" value="2000" required>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label fw-bold">Consumo base</label>
+                                <label class="form-label fw-bold">Consumo base [Barriles/día]</label>
                                 <input type="number" id="consumo" class="form-control" value="5000" required>
                             </div>
                         </div>
                         
                         <div class="mb-3">
-                            <label class="form-label fw-bold text-danger">Factor de pánico / incremento (%)</label>
+                            <label class="form-label fw-bold text-danger">Pánico en Surtidores (%)</label>
                             <input type="number" id="panico" class="form-control border-danger" value="40" required>
-                            <div class="form-text text-danger">Porcentaje adicional de consumo por acaparamiento.</div>
+                            <div class="form-text text-danger">Porcentaje adicional de consumo por especulación ciudadana y filas.</div>
                         </div>
 
                         <h6 class="text-primary border-bottom pb-2 mb-3 mt-4">Configuración Numérica</h6>
